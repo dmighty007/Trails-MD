@@ -867,10 +867,13 @@
   "final": {
     "uniform_rmse_penalized": 0.4549179840676877,
     "adaptive_rmse_penalized": 0.39485581771741884,
+    "adaptive_minus_uniform_rmse_penalized": -0.06006216635026884,
+    "adaptive_rmse_ratio": 0.8679714400094323,
     "uniform_isolated_states": 34,
     "adaptive_isolated_states": 26,
     "uniform_transition_shot_fraction": 0.2986111111111111,
     "adaptive_transition_shot_fraction": 0.31666666666666665,
-    "adaptive_switch_iteration": 25
+    "adaptive_switch_iteration": 25,
+    "adaptive_post_gate_iterations": 5
   }
 }

@@ -44,7 +44,7 @@ at startup. Below, only non-obvious defaults are noted — see
 
 | Key | Default | Description |
 | --- | --- | --- |
-| `spawn_scheme` | `density` | `density` \| `voronoi` \| `lof` \| `fps` \| `we` (weighted ensemble; the [kinetics-mode](modes.md) spawner) \| `msm` (MSM-guided; needs `msm.enabled`). |
+| `spawn_scheme` | `density` | `density` \| `voronoi` \| `lof` \| `fps` \| `we` (weighted ensemble; the [kinetics-mode](modes.md) spawner) \| `msm` (MSM-guided; needs `msm.enabled`) \| `committor` (convergence-gated committor refinement; see [Committor-guided spawning](committor_guided_spawning.md)). |
 | `spawn_type` | `hard` | `hard` or `probabilistic`. |
 | `search_mode` | `explore` | `explore` or `target` (toward `target`). |
 | `walker` / `step` / `stride` | `10` / `10000` / `100` | Walkers per iteration / MD steps / save interval. |

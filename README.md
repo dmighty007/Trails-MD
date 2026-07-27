@@ -16,7 +16,7 @@ rewriting the whole pipeline.
 - **Fixed or learned sampling spaces** — user-defined physical CVs, PCA, TICA,
   TVAE, and Deep-TICA, swappable at configuration time.
 - **Interchangeable spawning policies** — density, Voronoi, local-outlier-factor,
-  farthest-point, MSM-guided, and weighted-ensemble selection.
+  farthest-point, MSM-guided, committor-guided, and weighted-ensemble selection.
 - **Two modes** — exploration (discover states and pathways) and kinetics (an
   unbiased weighted-ensemble rate via velocity inheritance + source→sink recycling).
 - **Lineage-aware exploration** — every spawned frame stores its parent–child
@@ -248,6 +248,9 @@ Trails-MD currently supports:
 - `fps`: farthest-point sampling for geometric spread.
 - `we`: weighted-ensemble split/merge resampling (experimental).
 - `msm`: MSM-guided least-counts spawning (experimental; see [`docs/msm.md`](docs/msm.md)).
+- `committor`: convergence-gated committor-guided refinement after density
+  exploration (experimental; see
+  [`docs/committor_guided_spawning.md`](docs/committor_guided_spawning.md)).
 
 Voronoi note: `voronoi_clusters` controls the restart-selection partition.
 The regular `n_bins` grid is still used for run-log coverage diagnostics.
@@ -384,4 +387,3 @@ If you use Trails-MD in your research, please cite it. Citation metadata is in
 from it). A DOI and the accompanying publication will be added on release.
 
 Unhide this section once the accompanying paper is published. -->
-

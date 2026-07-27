@@ -29,6 +29,7 @@ the next iteration's walkers from. Spawners:
 | `fps` | Farthest-point sampling for maximal coverage. |
 | `we` | Weighted-ensemble split/merge resampling with **exact weight conservation** (split → `w/c`, merge sums, `sum(w) = 1` every iteration). CPU is allocated **bin-balanced, never weight-proportional**, and the binner is re-fitted to the **live** walker ensemble each iteration (not the cumulative history) so a frontier bin always holds a walker to replicate. `we_target_per_bin` sets walkers per bin. In the default exploration mode velocities are resampled, so a WE run is great for coverage but not a rate; for an unbiased rate/MFPT, use **kinetics mode** (`inherit_velocities: true` + source→sink `recycle_target`) — see [Exploration vs. kinetics](modes.md). |
 | `msm` | MSM-guided spawning (needs `msm.enabled`): least-counts × slow-mode leverage × outflow uncertainty (`msm.spawn_alpha`, `spawn_leverage`, `spawn_uncertainty`). Targets the states whose sampling most improves the *kinetic model*, not merely the geometrically sparse ones. |
+| `committor` | Committor-guided refinement: starts with density exploration, waits for source-target support and local-stitch connectivity to plateau, then spawns from cells with high committor acquisition score. See [Committor-guided spawning](committor_guided_spawning.md). |
 
 Any spawner can also be pointed toward a target region of the CV space
 (`search_mode: target`), balancing exploration with progress toward the

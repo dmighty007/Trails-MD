@@ -16,9 +16,10 @@ from informative regions, and repeats the cycle.
 - **VAMP-2 feature selection.** Reduce thousands of candidate distances to the
   few dozen that actually carry the slow dynamics.
   See [Feature selection](feature_selection.md).
-- **Six interchangeable spawning policies.** Density, Voronoi,
+- **Seven interchangeable spawning policies.** Density, Voronoi,
   local-outlier-factor, farthest-point, **weight-conserving weighted ensemble**,
-  and **MSM-guided** (least-counts × slow-mode leverage × uncertainty).
+  **MSM-guided** (least-counts × slow-mode leverage × uncertainty), and
+  **committor-guided** refinement after exploration support converges.
   See [Concepts](concepts.md).
 - **Landscape-adaptive binning.** Uniform, density-gradient, minimal adaptive
   binning (MAB), and MSM-eigenvector schemes. See [Adaptive binning](binning.md).
@@ -69,6 +70,8 @@ for post-hoc Markov State Model (MSM) construction — see
 - Want the full picture? Read **[Concepts](concepts.md)**.
 - Configuring a run? See the **[Configuration reference](configuration.md)**.
 - Running on a cluster? See **[Execution](execution.md)**.
+- Using committor-guided spawning? See
+  **[Committor-guided spawning](committor_guided_spawning.md)**.
 - Worked end-to-end examples: **[Alanine dipeptide](tutorials/alad.md)** and
   **[AIB9](tutorials/aib9.md)**.
 - Curious what Trails-MD found in the paper? See

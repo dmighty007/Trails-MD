@@ -143,6 +143,14 @@ def main() -> None:
         "final": {
             "uniform_rmse_penalized": uniform["metrics"][-1]["rmse_penalized"],
             "adaptive_rmse_penalized": adaptive["metrics"][-1]["rmse_penalized"],
+            "adaptive_minus_uniform_rmse_penalized": (
+                adaptive["metrics"][-1]["rmse_penalized"]
+                - uniform["metrics"][-1]["rmse_penalized"]
+            ),
+            "adaptive_rmse_ratio": (
+                adaptive["metrics"][-1]["rmse_penalized"]
+                / uniform["metrics"][-1]["rmse_penalized"]
+            ),
             "uniform_isolated_states": uniform["metrics"][-1]["isolated_states"],
             "adaptive_isolated_states": adaptive["metrics"][-1]["isolated_states"],
             "uniform_transition_shot_fraction": uniform["metrics"][-1][
@@ -152,6 +160,11 @@ def main() -> None:
                 "transition_shot_fraction"
             ],
             "adaptive_switch_iteration": adaptive["switch_iteration"],
+            "adaptive_post_gate_iterations": (
+                None
+                if adaptive["switch_iteration"] is None
+                else args.iterations - int(adaptive["switch_iteration"])
+            ),
         },
     }
 

@@ -116,5 +116,113 @@
       "max_markov_total_variation": 0.6709549727857497,
       "n_markov_rejected": 773
     }
-  ]
+  ],
+  "closed_loop_evidence": {
+    "current_conclusion": "Convergence-gated committor allocation clearly improves the 18x18 long toy run, but is only tied at 24x24 for the same total-shot budget; acquisition weights should be treated as plausible, not universally validated.",
+    "closed_loop_reports": [
+      {
+        "directory": "committor_guided_adaptive_long",
+        "status": "current",
+        "grid_size": 18,
+        "iterations": 100,
+        "switch_mode": "convergence",
+        "switch_iteration": 25,
+        "post_gate_iterations": 75,
+        "uniform_rmse_penalized": 0.18840732893495304,
+        "adaptive_rmse_penalized": 0.12334079423027364,
+        "adaptive_minus_uniform_rmse_penalized": -0.06506653470467941,
+        "adaptive_rmse_ratio": 0.6546496621310129,
+        "uniform_isolated_states": 0,
+        "adaptive_isolated_states": 0,
+        "uniform_transition_shot_fraction": 0.30291666666666667,
+        "adaptive_transition_shot_fraction": 0.4008333333333333
+      },
+      {
+        "directory": "committor_guided_adaptive_long_24x24",
+        "status": "current",
+        "grid_size": 24,
+        "iterations": 100,
+        "switch_mode": "convergence",
+        "switch_iteration": 39,
+        "post_gate_iterations": 61,
+        "uniform_rmse_penalized": 0.27006260561408596,
+        "adaptive_rmse_penalized": 0.2691224471976037,
+        "adaptive_minus_uniform_rmse_penalized": -0.0009401584164822618,
+        "adaptive_rmse_ratio": 0.9965187390000017,
+        "uniform_isolated_states": 4,
+        "adaptive_isolated_states": 1,
+        "uniform_transition_shot_fraction": 0.3258333333333333,
+        "adaptive_transition_shot_fraction": 0.32208333333333333
+      },
+      {
+        "directory": "committor_guided_adaptive",
+        "status": "current",
+        "grid_size": 18,
+        "iterations": 30,
+        "switch_mode": "convergence",
+        "switch_iteration": 25,
+        "post_gate_iterations": 5,
+        "uniform_rmse_penalized": 0.4549179840676877,
+        "adaptive_rmse_penalized": 0.39485581771741884,
+        "adaptive_minus_uniform_rmse_penalized": -0.06006216635026884,
+        "adaptive_rmse_ratio": 0.8679714400094323,
+        "uniform_isolated_states": 34,
+        "adaptive_isolated_states": 26,
+        "uniform_transition_shot_fraction": 0.2986111111111111,
+        "adaptive_transition_shot_fraction": 0.31666666666666665
+      },
+      {
+        "directory": "committor_guided_adaptive_v2",
+        "status": "superseded",
+        "grid_size": 18,
+        "iterations": 20,
+        "switch_mode": null,
+        "switch_iteration": null,
+        "post_gate_iterations": null,
+        "uniform_rmse_penalized": 0.3980928635501405,
+        "adaptive_rmse_penalized": 0.45296724014899165,
+        "adaptive_minus_uniform_rmse_penalized": 0.05487437659885114,
+        "adaptive_rmse_ratio": 1.1378431557639306,
+        "uniform_isolated_states": 109,
+        "adaptive_isolated_states": 73,
+        "uniform_transition_shot_fraction": 0.28958333333333336,
+        "adaptive_transition_shot_fraction": 0.2916666666666667
+      }
+    ],
+    "static_local_stitch_resolution_convergence": [
+      {
+        "grid_size": 18,
+        "n_shots_per_cell": 40,
+        "max_steps": 4000,
+        "rmse_local_stitch_vs_pde": 0.04055555075402942,
+        "isolated_states": 0,
+        "max_abs_residual": 3.3306690738754696e-16,
+        "max_markov_total_variation": 0.4735729386892178,
+        "max_markov_jensen_shannon": 0.15642356052908263,
+        "n_markov_rejected": 92
+      },
+      {
+        "grid_size": 30,
+        "n_shots_per_cell": 40,
+        "max_steps": 8000,
+        "rmse_local_stitch_vs_pde": 0.049228427541893056,
+        "isolated_states": 0,
+        "max_abs_residual": 3.3306690738754696e-16,
+        "max_markov_total_variation": 0.5531914893617021,
+        "max_markov_jensen_shannon": 0.27791841658371064,
+        "n_markov_rejected": 331
+      },
+      {
+        "grid_size": 40,
+        "n_shots_per_cell": 40,
+        "max_steps": 8000,
+        "rmse_local_stitch_vs_pde": 0.030436624513393472,
+        "isolated_states": 0,
+        "max_abs_residual": 5.551115123125783e-16,
+        "max_markov_total_variation": 0.6709549727857497,
+        "max_markov_jensen_shannon": 0.3237150593645679,
+        "n_markov_rejected": 773
+      }
+    ]
+  }
 }
