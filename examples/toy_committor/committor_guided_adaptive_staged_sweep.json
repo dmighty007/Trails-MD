@@ -1,0 +1,58 @@
+[
+  {
+    "name": "uniform",
+    "iteration": 29,
+    "total_first_exits": 2880,
+    "rmse_penalized": 0.48082354998253796,
+    "rmse_finite": 0.4894862867244949,
+    "finite_states": 293,
+    "isolated_states": 31,
+    "observed_states": 289,
+    "transition_shot_fraction": 0.30972222222222223,
+    "max_abs_residual": 1.1102230246251565e-16,
+    "max_markov_total_variation": 1.0,
+    "n_markov_rejected": 216
+  },
+  {
+    "name": "transition_only_after_warmup",
+    "iteration": 29,
+    "total_first_exits": 2880,
+    "rmse_penalized": 0.42268927279434204,
+    "rmse_finite": 0.5848188306225549,
+    "finite_states": 59,
+    "isolated_states": 265,
+    "observed_states": 177,
+    "transition_shot_fraction": 0.16111111111111112,
+    "max_abs_residual": 1.1102230246251565e-16,
+    "max_markov_total_variation": 1.0,
+    "n_markov_rejected": 119
+  },
+  {
+    "name": "transition_heavy_after_warmup",
+    "iteration": 29,
+    "total_first_exits": 2880,
+    "rmse_penalized": 0.4481083964132081,
+    "rmse_finite": 0.4738261059600412,
+    "finite_states": 253,
+    "isolated_states": 71,
+    "observed_states": 265,
+    "transition_shot_fraction": 0.22916666666666666,
+    "max_abs_residual": 2.220446049250313e-16,
+    "max_markov_total_variation": 1.0,
+    "n_markov_rejected": 191
+  },
+  {
+    "name": "full_after_warmup",
+    "iteration": 29,
+    "total_first_exits": 2880,
+    "rmse_penalized": 0.3792409765932954,
+    "rmse_finite": 0.3782763910820012,
+    "finite_states": 296,
+    "isolated_states": 28,
+    "observed_states": 293,
+    "transition_shot_fraction": 0.2777777777777778,
+    "max_abs_residual": 3.3306690738754696e-16,
+    "max_markov_total_variation": 1.0,
+    "n_markov_rejected": 208
+  }
+]

@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+  <title id="title">Local stitched committor method schematic</title>
+  <desc id="desc">Schematic of the implemented local first-exit committor method: sample trajectories from grid cells, estimate local transition rows, solve the harmonic committor equation, and report diagnostics.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#273142"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2266a6"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f8fb; }
+      .panel { fill: #ffffff; stroke: #c9d1dd; stroke-width: 1.5; }
+      .title { font: 700 24px Arial, sans-serif; fill: #18212f; }
+      .panel-title { font: 700 17px Arial, sans-serif; fill: #18212f; }
+      .label { font: 14px Arial, sans-serif; fill: #273142; }
+      .small { font: 12px Arial, sans-serif; fill: #4a5568; }
+      .tiny { font: 11px Arial, sans-serif; fill: #4a5568; }
+      .code { font: 13px "Courier New", monospace; fill: #18212f; }
+      .cell { fill: #edf2f7; stroke: #a6b2c2; stroke-width: 1; }
+      .cell-mid { fill: #fff7d6; stroke: #c29214; stroke-width: 2; }
+      .basin-a { fill: #d7ecff; stroke: #2266a6; stroke-width: 2; }
+      .basin-b { fill: #ffe1df; stroke: #b7352d; stroke-width: 2; }
+      .path { fill: none; stroke: #273142; stroke-width: 2.5; marker-end: url(#arrow); }
+      .path-blue { fill: none; stroke: #2266a6; stroke-width: 2.5; marker-end: url(#arrow-blue); }
+      .dash { stroke-dasharray: 6 5; }
+      .note { fill: #eef6ff; stroke: #7aa7d9; stroke-width: 1.2; }
+      .warn { fill: #fff3e0; stroke: #d99025; stroke-width: 1.2; }
+      .ok { fill: #e8f7ee; stroke: #4f9d69; stroke-width: 1.2; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="760"/>
+  <text class="title" x="40" y="46">Local First-Exit Stitched Committor</text>
+  <text class="label" x="40" y="72">Implemented by trails_md.analysis.local_stitch.committor_local_stitch</text>
+
+  <rect class="panel" x="40" y="105" width="360" height="430" rx="8"/>
+  <text class="panel-title" x="62" y="136">1. Local first-exit shots</text>
+  <text class="small" x="62" y="160">For each non-basin grid cell i, start short</text>
+  <text class="small" x="62" y="178">overdamped trajectories from a representative point.</text>
+
+  <g transform="translate(86,205)">
+    <rect class="cell" x="0" y="0" width="46" height="46"/>
+    <rect class="cell" x="46" y="0" width="46" height="46"/>
+    <rect class="cell" x="92" y="0" width="46" height="46"/>
+    <rect class="cell" x="138" y="0" width="46" height="46"/>
+    <rect class="cell" x="184" y="0" width="46" height="46"/>
+
+    <rect class="cell" x="0" y="46" width="46" height="46"/>
+    <rect class="basin-a" x="46" y="46" width="46" height="46"/>
+    <rect class="cell" x="92" y="46" width="46" height="46"/>
+    <rect class="cell" x="138" y="46" width="46" height="46"/>
+    <rect class="cell" x="184" y="46" width="46" height="46"/>
+
+    <rect class="cell" x="0" y="92" width="46" height="46"/>
+    <rect class="cell" x="46" y="92" width="46" height="46"/>
+    <rect class="cell-mid" x="92" y="92" width="46" height="46"/>
+    <rect class="cell" x="138" y="92" width="46" height="46"/>
+    <rect class="cell" x="184" y="92" width="46" height="46"/>
+
+    <rect class="cell" x="0" y="138" width="46" height="46"/>
+    <rect class="cell" x="46" y="138" width="46" height="46"/>
+    <rect class="cell" x="92" y="138" width="46" height="46"/>
+    <rect class="basin-b" x="138" y="138" width="46" height="46"/>
+    <rect class="cell" x="184" y="138" width="46" height="46"/>
+
+    <rect class="cell" x="0" y="184" width="46" height="46"/>
+    <rect class="cell" x="46" y="184" width="46" height="46"/>
+    <rect class="cell" x="92" y="184" width="46" height="46"/>
+    <rect class="cell" x="138" y="184" width="46" height="46"/>
+    <rect class="cell" x="184" y="184" width="46" height="46"/>
+
+    <circle cx="115" cy="115" r="5" fill="#18212f"/>
+    <text class="label" x="106" y="110">i</text>
+    <text class="tiny" x="53" y="75">A</text>
+    <text class="tiny" x="145" y="167">B</text>
+
+    <path class="path" d="M115,115 C118,95 143,96 151,83"/>
+    <path class="path" d="M115,115 C134,120 145,138 160,160"/>
+    <path class="path" d="M115,115 C95,111 84,95 70,75"/>
+    <path class="path dash" d="M115,115 C126,132 121,150 111,169"/>
+  </g>
+
+  <rect class="note" x="62" y="460" width="316" height="52" rx="6"/>
+  <text class="small" x="78" y="482">Recorded destination:</text>
+  <text class="code" x="78" y="502">cell j, A, B, or censored</text>
+
+  <path class="path-blue" d="M410,320 C435,320 445,320 468,320"/>
+
+  <rect class="panel" x="470" y="105" width="360" height="430" rx="8"/>
+  <text class="panel-title" x="492" y="136">2. Estimate local transition rows</text>
+  <text class="small" x="492" y="160">First-exit counts are row-normalized with</text>
+  <text class="small" x="492" y="178">Jeffreys-style smoothing on observed support.</text>
+
+  <rect class="note" x="505" y="215" width="288" height="84" rx="6"/>
+  <text class="code" x="527" y="246">C[i, j] = first exits i -> j</text>
+  <text class="code" x="527" y="272">K[i, j] = normalize(C[i, j] + 0.5)</text>
+
+  <g transform="translate(520,335)">
+    <text class="small" x="0" y="-18">Row K[i, .]</text>
+    <rect x="0" y="0" width="42" height="34" fill="#d7ecff" stroke="#2266a6"/>
+    <rect x="42" y="0" width="42" height="34" fill="#edf2f7" stroke="#a6b2c2"/>
+    <rect x="84" y="0" width="42" height="34" fill="#fff7d6" stroke="#c29214"/>
+    <rect x="126" y="0" width="42" height="34" fill="#edf2f7" stroke="#a6b2c2"/>
+    <rect x="168" y="0" width="42" height="34" fill="#ffe1df" stroke="#b7352d"/>
+    <text class="tiny" x="13" y="22">A</text>
+    <text class="tiny" x="54" y="22">j1</text>
+    <text class="tiny" x="96" y="22">j2</text>
+    <text class="tiny" x="138" y="22">j3</text>
+    <text class="tiny" x="181" y="22">B</text>
+    <text class="tiny" x="4" y="54">0.10</text>
+    <text class="tiny" x="46" y="54">0.25</text>
+    <text class="tiny" x="88" y="54">0.30</text>
+    <text class="tiny" x="130" y="54">0.05</text>
+    <text class="tiny" x="172" y="54">0.30</text>
+  </g>
+
+  <rect class="warn" x="505" y="450" width="288" height="62" rx="6"/>
+  <text class="small" x="521" y="474">Censored shots are dropped, then the</text>
+  <text class="small" x="521" y="493">observed destinations are renormalized.</text>
+
+  <path class="path-blue" d="M840,320 C865,320 875,320 898,320"/>
+
+  <rect class="panel" x="900" y="105" width="340" height="430" rx="8"/>
+  <text class="panel-title" x="922" y="136">3. Solve stitched committor</text>
+  <text class="small" x="922" y="160">Interior cells satisfy a discrete harmonic</text>
+  <text class="small" x="922" y="178">equation with fixed basin boundaries.</text>
+
+  <rect class="ok" x="930" y="215" width="282" height="96" rx="6"/>
+  <text class="code" x="955" y="246">q[A] = 0</text>
+  <text class="code" x="955" y="272">q[B] = 1</text>
+  <text class="code" x="955" y="298">q[i] = sum_j K[i,j] q[j]</text>
+
+  <rect class="note" x="930" y="345" width="282" height="72" rx="6"/>
+  <text class="small" x="946" y="370">Linear system:</text>
+  <text class="code" x="946" y="394">(I - K_II) q_I = K_IB 1</text>
+
+  <rect class="warn" x="930" y="450" width="282" height="62" rx="6"/>
+  <text class="small" x="946" y="474">Residual checks report whether the</text>
+  <text class="small" x="946" y="493">harmonic equation is solved cleanly.</text>
+
+  <rect class="panel" x="150" y="585" width="980" height="120" rx="8"/>
+  <text class="panel-title" x="172" y="617">Markovianity diagnostic reported alongside the result</text>
+  <text class="small" x="172" y="646">For each cell, shots are split into independent subsets. Each subset estimates its own transition row.</text>
+  <text class="code" x="172" y="676">compare K_i^(1) vs K_i^(2) with total-variation and Jensen-Shannon divergence</text>
+  <text class="small" x="172" y="702">Large heterogeneity flags cells whose local transition row is not a good state-level Markov description.</text>
+</svg>

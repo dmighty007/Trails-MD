@@ -1,0 +1,39 @@
+# Minimal CUDA smoke test for the self-contained vacuum alanine-dipeptide example.
+# This is intentionally tiny; it checks that Trails-MD can launch OpenMM on CUDA.
+
+system:
+  conf_file: structure.pdb
+  top_file: structure.pdb
+  topology: amber
+  system_file: system.py
+  project_file: project_phi_psi.py
+  trajectory_topology_file: structure.pdb
+  feature_selection: "protein and not (type H)"
+
+engine:
+  md_engine: openmm
+  platform_name: CUDA
+  precision: mixed
+  gpu_ids: [0]
+  temperature: 300.0
+  dt: 0.002
+  npt: false
+
+spawning:
+  spawn_scheme: density
+  spawn_type: hard
+  search_mode: explore
+  walker: 1
+  step: 20
+  stride: 10
+  max_workers: 1
+
+space_mode: fixed
+n_bins: [18, 18]
+min_values: [-3.141592653589793, -3.141592653589793]
+max_values: [3.141592653589793, 3.141592653589793]
+
+outdir: runs/alanine_dipeptide_cuda_smoke
+random_seed: 42
+checkpoint_freq: 1
+save_features: false
