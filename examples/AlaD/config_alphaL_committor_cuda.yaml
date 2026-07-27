@@ -1,0 +1,66 @@
+# Explicit-water alanine-dipeptide committor-guided refinement for alphaL.
+#
+# Fresh refinement workflow:
+#   cp -a examples/AlaD/runs/alad_alphaL_explore_36x36 \
+#     examples/AlaD/runs/alad_alphaL_committor_refine_from145
+#   trails-md --config examples/AlaD/config_alphaL_committor_cuda.yaml \
+#     --resume 145 --iterations 12 --log-level INFO
+#
+# The copied run carries the converged exploration history. `spawn_scheme:
+# committor` still starts in density exploration mode after resume, then switches
+# only after the local-stitch support metrics remain stable for the patience
+# window.
+
+system:
+  conf_file: start.gro
+  top_file: topol.top
+  topology: gromacs
+  project_file: project_phi_psi.py
+  trajectory_topology_file: start.gro
+  feature_selection: "protein and not (type H)"
+
+engine:
+  md_engine: openmm
+  platform_name: CUDA
+  gromacs_executable: gmx
+  gromacs_include_dir: /home/dm/Soft/GMX26/share/gromacs/top
+  temperature: 300.0
+  pressure: 1.0
+  dt: 0.002
+  npt: true
+  equilibrate: false
+
+spawning:
+  spawn_scheme: committor
+  spawn_type: hard
+  search_mode: explore
+  walker: 16
+  step: 1000
+  stride: 50
+  max_workers: 1
+  recent_density_window: 0
+  resolution_check_patience: 0
+  committor_grid_size: 36
+  committor_source: [[-2.7164577, -2.0164577], [2.0670563, 2.7670563]]
+  committor_target: [[0.35, 1.75], [0.05, 1.75]]
+  committor_min_iteration: 100
+  committor_patience: 5
+  committor_min_target_hits: 1000
+  committor_max_new_observed: 2
+  committor_max_new_finite: 2
+  committor_max_isolated_drop: 2
+  committor_min_count: 1
+  committor_markov_min_count: 8
+  committor_weight_transition: 1.0
+  committor_weight_undersampling: 0.5
+  committor_weight_frontier: 0.5
+  committor_weight_markov: 0.25
+
+space_mode: fixed
+n_bins: [36, 36]
+min_values: [-3.141592653589793, -3.141592653589793]
+max_values: [3.141592653589793, 3.141592653589793]
+outdir: runs/alad_alphaL_committor_refine_from145
+random_seed: 4242
+checkpoint_freq: 1
+save_features: false

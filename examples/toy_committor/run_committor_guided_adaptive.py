@@ -57,7 +57,21 @@ def main() -> None:
     parser.add_argument("--iterations", type=int, default=30)
     parser.add_argument("--cells-per-iteration", type=int, default=24)
     parser.add_argument("--shots-per-cell", type=int, default=4)
+    parser.add_argument(
+        "--switch-mode",
+        choices=("convergence", "fixed"),
+        default="convergence",
+        help=(
+            "Use committor-guided allocation only after exploration coverage "
+            "converges, or after a fixed warmup for controlled comparisons."
+        ),
+    )
     parser.add_argument("--warmup-iterations", type=int, default=10)
+    parser.add_argument("--exploration-min-iterations", type=int, default=20)
+    parser.add_argument("--exploration-patience", type=int, default=3)
+    parser.add_argument("--exploration-max-new-observed", type=int, default=5)
+    parser.add_argument("--exploration-max-new-finite", type=int, default=8)
+    parser.add_argument("--exploration-max-isolated-drop", type=int, default=8)
     parser.add_argument("--dt", type=float, default=2.0e-4)
     parser.add_argument("--max-steps", type=int, default=5000)
     parser.add_argument("--seed", type=int, default=11)
@@ -90,7 +104,13 @@ def main() -> None:
         iterations=args.iterations,
         cells_per_iteration=args.cells_per_iteration,
         shots_per_cell=args.shots_per_cell,
+        switch_mode=args.switch_mode,
         warmup_iterations=args.warmup_iterations,
+        exploration_min_iterations=args.exploration_min_iterations,
+        exploration_patience=args.exploration_patience,
+        exploration_max_new_observed=args.exploration_max_new_observed,
+        exploration_max_new_finite=args.exploration_max_new_finite,
+        exploration_max_isolated_drop=args.exploration_max_isolated_drop,
         dt=args.dt,
         max_steps=args.max_steps,
         weights=weights,
@@ -106,7 +126,15 @@ def main() -> None:
         "iterations": args.iterations,
         "cells_per_iteration": args.cells_per_iteration,
         "shots_per_cell": args.shots_per_cell,
+        "switch_mode": args.switch_mode,
         "warmup_iterations": args.warmup_iterations,
+        "exploration_convergence": {
+            "min_iterations": args.exploration_min_iterations,
+            "patience": args.exploration_patience,
+            "max_new_observed": args.exploration_max_new_observed,
+            "max_new_finite": args.exploration_max_new_finite,
+            "max_isolated_drop": args.exploration_max_isolated_drop,
+        },
         "max_steps": args.max_steps,
         "dt": args.dt,
         "weights": asdict(weights),
@@ -123,6 +151,7 @@ def main() -> None:
             "adaptive_transition_shot_fraction": adaptive["metrics"][-1][
                 "transition_shot_fraction"
             ],
+            "adaptive_switch_iteration": adaptive["switch_iteration"],
         },
     }
 
@@ -154,7 +183,13 @@ def run_closed_loop(
     iterations: int,
     cells_per_iteration: int,
     shots_per_cell: int,
+    switch_mode: str,
     warmup_iterations: int,
+    exploration_min_iterations: int,
+    exploration_patience: int,
+    exploration_max_new_observed: int,
+    exploration_max_new_finite: int,
+    exploration_max_isolated_drop: int,
     dt: float,
     max_steps: int,
     weights: CommittorAcquisitionWeights,
@@ -175,6 +210,8 @@ def run_closed_loop(
     metrics: list[dict[str, float]] = []
     stitch = None
     shot_counter = 0
+    adaptive_enabled = strategy == "adaptive" and switch_mode == "fixed" and warmup_iterations <= 0
+    switch_iteration: int | None = 0 if adaptive_enabled else None
     for iteration in range(iterations):
         stitch = _solve_from_first_exit_counts(
             grid,
@@ -186,12 +223,11 @@ def run_closed_loop(
             markov_threshold_tv=0.25,
             markov_threshold_js=None,
         )
+        use_adaptive = strategy == "adaptive" and adaptive_enabled
         selected = _select_cells(
             stitch,
             candidates,
-            strategy=strategy,
-            iteration=iteration,
-            warmup_iterations=warmup_iterations,
+            use_adaptive=use_adaptive,
             cells_per_iteration=cells_per_iteration,
             weights=weights,
             rng=rng,
@@ -233,32 +269,49 @@ def run_closed_loop(
             markov_threshold_js=None,
         )
         metrics.append(
-            _metrics(
+            metric := _metrics(
                 iteration,
                 stitch,
                 pde_on_grid,
                 transition_reference,
                 counts,
                 is_a | is_b,
+                phase="adaptive" if use_adaptive else "explore",
             )
         )
+        if strategy == "adaptive" and not adaptive_enabled:
+            adaptive_enabled = _exploration_converged(
+                metrics,
+                switch_mode=switch_mode,
+                warmup_iterations=warmup_iterations,
+                min_iterations=exploration_min_iterations,
+                patience=exploration_patience,
+                max_new_observed=exploration_max_new_observed,
+                max_new_finite=exploration_max_new_finite,
+                max_isolated_drop=exploration_max_isolated_drop,
+            )
+            if adaptive_enabled:
+                switch_iteration = iteration + 1
+                LOGGER.info(
+                    "Switching %s run to committor-guided allocation at iteration %d",
+                    strategy,
+                    switch_iteration,
+                )
         LOGGER.debug("%s iter %d: %s", strategy, iteration, metrics[-1])
 
-    return {"metrics": metrics, "stitch": stitch}
+    return {"metrics": metrics, "stitch": stitch, "switch_iteration": switch_iteration}
 
 
 def _select_cells(
     stitch,
     candidates: np.ndarray,
     *,
-    strategy: str,
-    iteration: int,
-    warmup_iterations: int,
+    use_adaptive: bool,
     cells_per_iteration: int,
     weights: CommittorAcquisitionWeights,
     rng: np.random.Generator,
 ) -> np.ndarray:
-    if strategy == "uniform" or iteration < warmup_iterations:
+    if not use_adaptive:
         return rng.choice(
             candidates,
             size=min(cells_per_iteration, len(candidates)),
@@ -302,6 +355,7 @@ def _metrics(
     transition_reference: np.ndarray,
     counts: np.ndarray,
     boundary: np.ndarray,
+    phase: str,
 ) -> dict[str, float]:
     q = np.asarray(stitch.q, dtype=float)
     non_boundary = ~boundary
@@ -312,6 +366,7 @@ def _metrics(
     all_counts = float(total_counts.sum())
     return {
         "iteration": int(iteration),
+        "phase": phase,
         "total_first_exits": int(all_counts),
         "rmse_penalized": _rmse(q_penalized[non_boundary], reference[non_boundary]),
         "rmse_finite": _rmse(q[finite & non_boundary], reference[finite & non_boundary])
@@ -327,6 +382,38 @@ def _metrics(
         "max_markov_total_variation": stitch.markov_check.max_total_variation,
         "n_markov_rejected": int(len(stitch.markov_check.rejected_states)),
     }
+
+
+def _exploration_converged(
+    metrics: list[dict[str, float]],
+    *,
+    switch_mode: str,
+    warmup_iterations: int,
+    min_iterations: int,
+    patience: int,
+    max_new_observed: int,
+    max_new_finite: int,
+    max_isolated_drop: int,
+) -> bool:
+    if switch_mode == "fixed":
+        return len(metrics) >= warmup_iterations
+    if switch_mode != "convergence":
+        raise ValueError(f"unknown switch mode: {switch_mode}")
+    if len(metrics) < max(min_iterations, patience + 1):
+        return False
+
+    recent = metrics[-(patience + 1) :]
+    for before, after in zip(recent[:-1], recent[1:]):
+        new_observed = int(after["observed_states"]) - int(before["observed_states"])
+        new_finite = int(after["finite_states"]) - int(before["finite_states"])
+        isolated_drop = int(before["isolated_states"]) - int(after["isolated_states"])
+        if new_observed > max_new_observed:
+            return False
+        if new_finite > max_new_finite:
+            return False
+        if isolated_drop > max_isolated_drop:
+            return False
+    return True
 
 
 def _reference_on_grid(pde, grid) -> np.ndarray:

@@ -88,6 +88,32 @@ class TrailsMDCore:
             alpha=self.config.msm.spawn_alpha,
             leverage=self.config.msm.spawn_leverage,
             uncertainty=self.config.msm.spawn_uncertainty,
+            committor_grid_size=self.config.spawning.committor_grid_size,
+            committor_source=self.config.spawning.committor_source,
+            committor_source_half_width=(
+                self.config.spawning.committor_source_half_width
+            ),
+            committor_target=self.config.spawning.committor_target,
+            committor_min_iteration=self.config.spawning.committor_min_iteration,
+            committor_patience=self.config.spawning.committor_patience,
+            committor_min_target_hits=self.config.spawning.committor_min_target_hits,
+            committor_max_new_observed=(
+                self.config.spawning.committor_max_new_observed
+            ),
+            committor_max_new_finite=self.config.spawning.committor_max_new_finite,
+            committor_max_isolated_drop=(
+                self.config.spawning.committor_max_isolated_drop
+            ),
+            committor_min_count=self.config.spawning.committor_min_count,
+            committor_markov_min_count=self.config.spawning.committor_markov_min_count,
+            committor_weight_transition=(
+                self.config.spawning.committor_weight_transition
+            ),
+            committor_weight_undersampling=(
+                self.config.spawning.committor_weight_undersampling
+            ),
+            committor_weight_frontier=self.config.spawning.committor_weight_frontier,
+            committor_weight_markov=self.config.spawning.committor_weight_markov,
             seed=self.config.random_seed,
         )
 

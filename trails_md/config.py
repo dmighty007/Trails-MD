@@ -105,6 +105,26 @@ class SpawningConfig(BaseModel):
     resolution_max_bins: int = 150
     voronoi_max_clusters: int = 5000
     convergence_patience: int = 0
+    # Committor-guided exploration. `spawn_scheme: committor` starts as ordinary
+    # exploration, estimates an observed local-stitch committor from completed
+    # short unbiased bursts, then redirects new bursts only after the observed
+    # support has plateaued for the requested patience window.
+    committor_grid_size: int = 36
+    committor_source: list[list[float]] | None = None
+    committor_source_half_width: float = 0.35
+    committor_target: list[list[float]] | None = None
+    committor_min_iteration: int = 100
+    committor_patience: int = 5
+    committor_min_target_hits: int = 1000
+    committor_max_new_observed: int = 2
+    committor_max_new_finite: int = 2
+    committor_max_isolated_drop: int = 2
+    committor_min_count: int = 1
+    committor_markov_min_count: int = 8
+    committor_weight_transition: float = 1.0
+    committor_weight_undersampling: float = 0.5
+    committor_weight_frontier: float = 0.5
+    committor_weight_markov: float = 0.25
 
 
 class AdaptiveModelConfig(BaseModel):

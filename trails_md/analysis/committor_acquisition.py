@@ -36,6 +36,7 @@ def score_local_stitch_cells(
     *,
     weights: CommittorAcquisitionWeights | None = None,
     min_count: int = 0,
+    markov_min_count: int = 8,
 ) -> CommittorAcquisition:
     """Score grid cells for additional local first-exit sampling.
 
@@ -75,6 +76,7 @@ def score_local_stitch_cells(
         )
     )
     markov_pressure[~np.isfinite(markov_pressure)] = 0.0
+    markov_pressure[total_counts < float(markov_min_count)] = 0.0
     markov_pressure[is_boundary] = 0.0
 
     score = (
