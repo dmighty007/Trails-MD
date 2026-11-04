@@ -114,6 +114,18 @@ class RegularBinner:
             distance = np.linalg.norm(centers - target_center, axis=1)
             with np.errstate(divide="ignore", invalid="ignore"):
                 closeness = np.where(distance > 0, 1.0 / distance, 0.0)
+            # The target's own bin is at distance 0 from itself. 1/0 is not
+            # finite, and guarding it with 0.0 ranked the single bin that
+            # CONTAINS the target last of all -- and, under probabilistic
+            # selection, multiplied its weight by zero, so the spawner could
+            # never draw from it. Give it the largest finite closeness instead;
+            # every other bin keeps the value it had.
+            at_target = distance <= 0
+            if at_target.any():
+                finite = closeness[~at_target]
+                closeness = np.where(
+                    at_target, finite.max() if finite.size else 1.0, closeness
+                )
             denom = closeness.max() - closeness.min()
             target_closeness = (
                 (closeness - closeness.min()) / denom if denom > 1e-12 else np.ones_like(closeness)

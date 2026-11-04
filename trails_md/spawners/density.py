@@ -82,15 +82,14 @@ class DensitySpawner(Spawner):
             raise ValueError("Cannot sample density bins: no populated bins found.")
 
         recent = set().union(*self.recent_bins) if self.recent_bins else set()
+        targeting = self.mode == "target" and table.target_closeness is not None
         selected: list[int] = []
         for population in sorted(np.unique(table.populations[occupied])):
             rows = occupied[table.populations[occupied] == population]
-            if self.mode == "target" and table.target_closeness is not None:
-                rows = rows[np.argsort(table.target_closeness[rows])[::-1]]
             fresh = [row for row in rows if table.ids[int(row)] not in recent]
             stale = [row for row in rows if table.ids[int(row)] in recent]
-            ordered = list(self.rng.permutation(fresh)) + list(
-                self.rng.permutation(stale)
+            ordered = self._order_group(fresh, table, targeting) + self._order_group(
+                stale, table, targeting
             )
             selected.extend(int(row) for row in ordered)
             if len(selected) >= top_n:
@@ -98,6 +97,30 @@ class DensitySpawner(Spawner):
 
         repeats = int(np.ceil(top_n / len(selected)))
         return np.tile(np.asarray(selected, dtype=int), repeats)[:top_n]
+
+    def _order_group(
+        self, group: list, table: BinTable, targeting: bool
+    ) -> list:
+        """Order one equal-population group of bins.
+
+        Population is the primary key, so this only decides the order *within* a
+        group of equally sparse bins. In explore mode that order carries no
+        information and is randomised. In target mode it is the one place the
+        target enters a `hard` selection, so it must be honoured: closest to the
+        target first, with the shuffle applied *before* the sort so that exact
+        ties stay randomly broken rather than biased toward low bin indices.
+
+        Randomising after the sort -- as this did until the AdK campaign -- threw
+        the ordering away and left `search_mode: target` statistically
+        indistinguishable from `explore` under `spawn_type: hard`.
+        """
+        if len(group) == 0:
+            return []
+        shuffled = np.asarray(group)[self.rng.permutation(len(group))]
+        if not targeting:
+            return list(shuffled)
+        closeness = table.target_closeness[shuffled.astype(int)]
+        return list(shuffled[np.argsort(-closeness, kind="stable")])
 
     def state_dict(self) -> dict[str, Any]:
         # Persist the hard-mode recency memory so a resumed run reproduces the
